@@ -1,8 +1,8 @@
 ## The aimed modules are
     eManager
-    |-- accounting
-    |-- crm
-    |-- hr
+    |-- accounting ...
+    |-- crm ...
+    |-- hr ...
     |-- buy
     |-- sell
     |-- production

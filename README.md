@@ -13,10 +13,10 @@ A beginner's project to make a software for managing small businesses.
     ```
  2. create the virtual environment named venv.
     ```sh
-    $ virtualenv venv -p python3
+    $ virtualenv venv -p python3.8
     ```
  3. activate the environment
-    ```SH
+    ```sh
     $ source venv/bin/activate
     ```
  4. install the required packages using pip
@@ -25,3 +25,5 @@ A beginner's project to make a software for managing small businesses.
     ```
     Now, run the codes as usual.
 
+
+test.py, test_acc.py etc are being used for testing modules.
