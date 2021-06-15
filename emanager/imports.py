@@ -1,4 +1,4 @@
-import emanager.constants
+from emanager.constants import*
 
 from emanager.accounting import*
 from emanager.crm import*
