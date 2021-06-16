@@ -1,5 +1,5 @@
 import os
-from emanager.constants import*
+from emanager.constants import *
 import pandas as pd
 
 hr_path = os.path.dirname(os.path.realpath(__file__))
@@ -15,8 +15,8 @@ class Worker:
 
     def check_database(self):
         """Check the database to find the Worker details and
-            update the status of Worker object"""
-            
+        update the status of Worker object"""
+
         w_data = pd.read_csv(f"{hr_path}/worker_data.csv", index_col="NAME")
         try:
             self.id = w_data.loc[self.name, "ID"]
@@ -30,10 +30,10 @@ class Worker:
         self.check_database()
         self.check_attendance()
         self.check_balance()
-    
+
     def update_details(self, detail, new_value):
         """Update details of a Worker"
-        
+
         Parameters
         ------------
         detail: str, list of str
@@ -41,18 +41,17 @@ class Worker:
         new_value: str, list of str
             new value of the detail
         """
-        
-        if type(detail)!= list:
-            detail=[detail]
-            new_value=[new_value]
+
+        if type(detail) != list:
+            detail = [detail]
+            new_value = [new_value]
             print("Details Updated :\n", detail)
-            
+
         w_data = pd.read_csv(f"{hr_path}/worker_data.csv", index_col="ID")
-        w_data.at[self.id, detail+["LAST_MODIFIED"]] = new_value + [TIMESTAMP]
+        w_data.at[self.id, detail + ["LAST_MODIFIED"]] = new_value + [TIMESTAMP]
         w_data.to_csv(f"{hr_path}/worker_data.csv")
         self.check_database()
-        
-        
+
     def update_pay_rate(self, new_rate):
         w_data = pd.read_csv(f"{hr_path}/worker_data.csv", index_col="ID")
         w_data.at[self.id, ["PAY_RATE", "LAST_MODIFIED"]] = [new_rate, TIMESTAMP]
@@ -83,7 +82,6 @@ class AddWorker:
 
         self.id = self.generate_id(name, group, id_type="W")
         self.add_entry(name, age, address, mobile_no, join_date, pay_r, group)
-        
 
     def generate_id(self, name, group, id_type="X"):
         initials = name.split()
@@ -96,4 +94,3 @@ class AddWorker:
             c_data.write(
                 f"\n{self.id},{name},{age},{address},{mobile_no},{join_date},{pay_r},{group},{TIMESTAMP}"
             )
-

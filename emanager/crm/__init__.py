@@ -1,1 +1,1 @@
-from .Customer import * 
+from .customer import *
