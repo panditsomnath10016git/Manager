@@ -12,7 +12,7 @@ class Bank():
     #def chart_of_accounts(self):
     #    accounts = pd.read_csv("chart_of_accounts.csv")
     
-    def update_account_chart(self,acc_no, detalis):
+    def update_account_details(self,acc_no, detalis):
     #TODO
         pass
         acc_details = {

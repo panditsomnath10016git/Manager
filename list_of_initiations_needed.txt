@@ -1,0 +1,10 @@
+#TODO
+
+## create directories
+    - account_data
+        - treasury account
+    - worker_data
+    - customer_data
+    
+
+ 

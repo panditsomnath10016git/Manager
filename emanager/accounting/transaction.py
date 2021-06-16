@@ -4,32 +4,36 @@ from emanager.constants import TIMESTAMP
 from emanager.accounting import ledger
 import pandas as pd
 
-acc_path = os.path.dirname(os.path.realpath(__file__))+"/acc_data"
+acc_data_path = os.path.dirname(os.path.realpath(__file__))+"/acc_data"
 
 class Transaction:
     """supplies withdrawl and deposit mechanism"""
     
     def __init__(self):
-        print(super().__name__)#test method
+        pass
+      #  print(super())#testing
         
-    def deposit(self, amount, payer, remarks="Self Deposit"):
+    def deposit(self, amount, payer, remarks="Self Deposit", **kwargs):
+        print(f'depositing {amount} rupees in acc {payer}...')
         trans_details = {
-            'PAYER':payer,
+            'ACCOUNT':payer,
             'TRANSACTION_ID':self.transaction_id(),
             'REMARKS': remarks,
             'CREDITED': amount, 
         }
-        ledger.write_transaction(trans_details)
+        ledger.write_transaction(trans_details, kwargs)
         
 
-    def withdrawl(self, amount, benifactor, remarks="Self Withdrawl"):
+    def withdrawl(self, amount, benifactor, remarks="Self Withdrawl", **kwargs):
+        print(f'withdrawing {amount} rupees from acc {payer}...')
         trans_details = {
-            'PAYER':benifactor,
+            'ACCOUNT':benifactor,
             'TRANSACTION_ID':self.transaction_id(),
             'REMARKS': remarks,
             'DEBITED': amount, 
         }
-        ledger.write_transaction(trans_details)
+        ledger.write_transaction(trans_details, kwargs)
         
     def transaction_id(self):
-        self.transaction_id = uuid.uuid4().hex
+        print(f'generating transaction id...')
+        return uuid.uuid4().hex
