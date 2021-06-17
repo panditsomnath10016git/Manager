@@ -48,7 +48,7 @@ class Account(Transaction):
             f"{acc_data_path}/chart_of_accounts.csv", index_col="ACCOUNT_NO"
         )
         values = list(acc_details.values())
-        acc_chart.at[self.acc_no] = values
+        acc_chart.at[int(self.acc_no)] = values
         acc_chart.to_csv(f"{acc_data_path}/chart_of_accounts.csv")
 
 

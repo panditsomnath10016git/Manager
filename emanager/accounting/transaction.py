@@ -12,8 +12,7 @@ class Transaction:
 
     def __init__(self):
         pass
-
-    #  print(super())#testing
+        # print(super())#testing
 
     def deposit(self, amount, payer, remarks="Self Deposit", new_acc=False):
         print(f"depositing {amount} rupees in acc {payer}...")
