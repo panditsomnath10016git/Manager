@@ -31,17 +31,25 @@ def write_ledger(acc_no, trans_details, new_acc=False):
     print(f"writing ledger..")
     if not new_acc:
         cr_balance = (
-            pd.read_csv(f"{acc_data_path}/{acc_no}.csv").tail(1).iloc[0]["CR_BALANCE"]
+            pd.read_csv(f"{acc_data_path}/{acc_no}.csv")
+            .tail(1)
+            .iloc[0]["CR_BALANCE"]
             + trans_details["CREDITED"]
             - trans_details["DEBITED"]
         )
         trans_details.update({"CR_BALANCE": cr_balance})
         trans_entry = pd.DataFrame.from_dict([trans_details])
         trans_entry.to_csv(
-            f"{acc_data_path}/{acc_no}.csv", mode="a", header=False, index=False
+            f"{acc_data_path}/{acc_no}.csv",
+            mode="a",
+            header=False,
+            index=False,
         )
         trans_entry.to_csv(
-            f"{acc_data_path}/treasury.csv", mode="a", header=False, index=False
+            f"{acc_data_path}/treasury.csv",
+            mode="a",
+            header=False,
+            index=False,
         )
         print("account updated.\n", trans_entry)
     else:
@@ -58,4 +66,6 @@ def write_transaction(trans_details, kwargs):
         "CREDITED": 0.00,
     }
     trans_data.update(trans_details)
-    write_ledger(trans_data.pop("ACCOUNT"), trans_data, new_acc=kwargs.get("new_acc"))
+    write_ledger(
+        trans_data.pop("ACCOUNT"), trans_data, new_acc=kwargs.get("new_acc")
+    )

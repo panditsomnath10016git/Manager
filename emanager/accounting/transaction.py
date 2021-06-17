@@ -25,7 +25,9 @@ class Transaction:
         }
         ledger.write_transaction(trans_details, kwargs)
 
-    def withdrawl(self, amount, benifactor, remarks="Self Withdrawl", **kwargs):
+    def withdrawl(
+        self, amount, benifactor, remarks="Self Withdrawl", **kwargs
+    ):
         print(f"withdrawing {amount} rupees from acc {benifactor}...")
         trans_details = {
             "ACCOUNT": benifactor,

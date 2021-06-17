@@ -16,7 +16,8 @@ class Worker:
     def check_database(self):
         """Check the database to find the Worker details and
         update the status of Worker object"""
-
+        
+        print('checking worker database...')
         w_data = pd.read_csv(f"{hr_path}/worker_data.csv", index_col="NAME")
         try:
             self.id = w_data.loc[self.name, "ID"]
@@ -31,28 +32,21 @@ class Worker:
         self.check_attendance()
         self.check_balance()
 
-    def update_details(self, detail, new_value):
-        """Update details of a Worker"
-
-        Parameters
-        ------------
-        detail: str, list of str
-            NAME, AGE, ADDRESS, MOBILE_NO, PAY_RATE, GROUP
-        new_value: str, list of str
-            new value of the detail
-        """
-
-        if type(detail) != list:
-            detail = [detail]
-            new_value = [new_value]
-            print("Details Updated :\n", detail)
-
-        w_data = pd.read_csv(f"{hr_path}/worker_data.csv", index_col="ID")
-        w_data.at[self.id, detail + ["LAST_MODIFIED"]] = new_value + [TIMESTAMP]
+    def update_details(self, **kwargs):
+        """Update details of a Worker"""
+        print('updating worker detalils...')
+        w_details = self.details.to_dict()
+        w_details.update(kwargs)
+        w_data = pd.read_csv(
+            f"{hr_path}/worker_data.csv", index_col="ID"
+        )
+        values = list(w_details.values())
+        w_data.at[self.id] = values
         w_data.to_csv(f"{hr_path}/worker_data.csv")
         self.check_database()
 
     def update_pay_rate(self, new_rate):
+        print('updating worker pay rate...')
         w_data = pd.read_csv(f"{hr_path}/worker_data.csv", index_col="ID")
         w_data.at[self.id, ["PAY_RATE", "LAST_MODIFIED"]] = [new_rate, TIMESTAMP]
         w_data.to_csv(f"{hr_path}/worker_data.csv")

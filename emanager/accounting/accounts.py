@@ -11,9 +11,17 @@ class Account(Transaction):
     def __init__(self, acc_no):
         print(f"account {acc_no} initiated.")
         self.acc_no = acc_no
-        self.acc_details = pd.read_csv(
+        self.details = pd.read_csv(
             f"{acc_data_path}/chart_of_accounts.csv", index_col="ACCOUNT_NO"
         ).loc[acc_no]
+
+    def cr_balance(self):
+        self.cr_balance = (
+            pd.read_csv(f"{acc_data_path}/{self.acc_no}.csv")
+            .tail(1)
+            .iloc[0]["CR_BALANCE"]
+        )
+        return self.cr_balance
 
     def deposit(self, amount, **kwargs):
         Transaction.deposit(self, amount, self.acc_no, **kwargs)
@@ -21,21 +29,34 @@ class Account(Transaction):
     def withdrawl(self, amount, **kwargs):
         Transaction.withdrawl(self, amount, self.acc_no, **kwargs)
 
-    def cr_balance():
+    def view_statement(self, upto=10):
+        print(
+            f"Last {upto} transactions.\n",
+            30 * "-",
+            pd.read_csv(f"{acc_data_path}/{self.acc_no}.csv").tail(upto),
+        )
+
+    def generate_passbook(self):
+        # create pdf and send to a output folder
         pass
 
-    def view_statement(upto=10):
-        pass
+    def update_details(self, **kwargs):
+        """Update details of account"""
 
-    def generate_passbook():
-        pass
+        acc_details = self.details.to_dict()
+        acc_details.update(kwargs)
+        acc_chart = pd.read_csv(
+            f"{acc_data_path}/chart_of_accounts.csv", index_col="ACCOUNT_NO"
+        )
+        values = list(acc_details.values())
+        acc_chart.at[self.acc_no] = values
+        acc_chart.to_csv(f"{acc_data_path}/chart_of_accounts.csv")
 
 
 class Treasury(Account):
     def __init__(self):
         acc_no = "0000000001"
         Account.__init__(acc_no)
-        self.check_vault_status()
 
     def check_vault_status(self):
         vault = pd.read_csv(f"{acc_data_path}/treasury.csv")
