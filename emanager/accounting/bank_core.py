@@ -14,6 +14,9 @@ class Bank:
     #    accounts = pd.read_csv("chart_of_accounts.csv")
     def refresh_database(self):
         pass
+        self.update_chart_of_accounts()
+        self.update_treasury()
+        
 
     def update_chart_of_accounts(self):
         pass
