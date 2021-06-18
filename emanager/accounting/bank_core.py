@@ -16,10 +16,6 @@ class Bank:
         pass
         self.update_chart_of_accounts()
         self.update_treasury()
-        
-
-    def update_chart_of_accounts(self):
-        pass
 
     def update_treasury(self):
         pass

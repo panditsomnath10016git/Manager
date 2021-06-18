@@ -3,15 +3,22 @@ import pandas as pd
 from emanager.constants import TIMESTAMP
 
 acc_data_path = os.path.dirname(os.path.realpath(__file__)) + "/acc_data"
-treasury_acc = '1000000001'
+treasury_acc = "1000000001"
+
+
+def update_chart_of_accounts(*args):
+    pass
+
 
 def get_cr_balance(acc_no, trans_details):
-    return (pd.read_csv(f'{acc_data_path}/{acc_no}.csv')
+    return (
+        pd.read_csv(f"{acc_data_path}/{acc_no}.csv")
         .tail(1)
         .iloc[0]["CR_BALANCE"]
         + trans_details["CREDITED"]
         - trans_details["DEBITED"]
     )
+
 
 def write_ledger(acc_no, trans_details, new_acc=False):
     """write a ledger entry to the account
@@ -28,12 +35,13 @@ def write_ledger(acc_no, trans_details, new_acc=False):
         header=new_acc,
         index=False,
     )
+    update_chart_of_accounts(acc_no)
 
 
 def write_transaction(acc_no, trans_details, new_acc=False):
     """updates ledgers with transaction details"""
 
-    print(f"writing transaction..")
+    print("writing transaction..")
     trans_data = {
         "DATE": TIMESTAMP,
         "TRANSACTION_ID": " ",
@@ -47,4 +55,3 @@ def write_transaction(acc_no, trans_details, new_acc=False):
     if not new_acc:
         write_ledger(treasury_acc, trans_data)
     print("account updated.\n")
-    

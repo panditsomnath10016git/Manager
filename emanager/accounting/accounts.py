@@ -1,5 +1,5 @@
 import os
-from emanager.constants import TIMESTAMP
+from emanager.constants import TIMESTAMP, DATA_TYPES
 from emanager.accounting.transaction import Transaction
 import pandas as pd
 
@@ -11,7 +11,9 @@ class Account(Transaction):
         print(f"account {acc_no} initiated.")
         self.acc_no = str(acc_no)
         self.details = pd.read_csv(
-            f"{acc_data_path}/chart_of_accounts.csv", index_col="ACCOUNT_NO"
+            f"{acc_data_path}/chart_of_accounts.csv",
+            dtype=DATA_TYPES["ACC_CHART"],
+            index_col="ACCOUNT_NO",
         ).loc[int(acc_no)]
 
     def cr_balance(self):
@@ -31,7 +33,8 @@ class Account(Transaction):
     def view_statement(self, upto=10):
         print(
             f"Last {upto} transactions.\n",
-            30 * "-",'\n',
+            30 * "-",
+            "\n",
             pd.read_csv(f"{acc_data_path}/{self.acc_no}.csv").tail(upto),
         )
 
@@ -42,10 +45,14 @@ class Account(Transaction):
     def update_details(self, **kwargs):
         """Update details of account"""
 
+        print("updating account details...")
         acc_details = self.details.to_dict()
         acc_details.update(kwargs)
+        print(acc_details)
         acc_chart = pd.read_csv(
-            f"{acc_data_path}/chart_of_accounts.csv", index_col="ACCOUNT_NO"
+            f"{acc_data_path}/chart_of_accounts.csv",
+            dtype=DATA_TYPES["ACC_CHART"],
+            index_col="ACCOUNT_NO",
         )
         values = list(acc_details.values())
         acc_chart.at[int(self.acc_no)] = values
@@ -54,8 +61,8 @@ class Account(Transaction):
 
 class Treasury(Account):
     def __init__(self):
-        acc_no = '1000000001'
-        Account.__init__(self, acc_no)
+        acc_no = "1000000001"
+        super().__init__(acc_no)
 
     def check_vault_status(self):
         vault = pd.read_csv(f"{acc_data_path}/{self.acc_no}.csv")
@@ -68,12 +75,19 @@ class Treasury(Account):
 
 class CreateAccount:
     """create account , add it to chart_of_accounts, start new ledger"""
-    #TODO two people can have same names
-    def __init__(self, name, address, mobile_no, first_deposit=0.0, force_create=False):
-        acc_chart = pd.read_csv(f"{acc_data_path}/chart_of_accounts.csv")
-        if (not acc_chart.isin([name, address]).any().any()) | force_create:
+
+    # TODO two people can have same names
+
+    def __init__(
+        self, name, address, mobile_no, first_deposit=0.0, force_create=False
+    ):
+        acc_chart = pd.read_csv(
+            f"{acc_data_path}/chart_of_accounts.csv",
+            dtype=DATA_TYPES["ACC_CHART"],
+        )
+        if (not acc_chart.isin([name, mobile_no]).any().any()) or force_create:
             print("creating new acccount...")
-            self.generate_acc_no()
+            self.__generate_acc_no()
             acc_details = {
                 "ACCOUNT_NO": self.acc_no,
                 "NAME": name,
@@ -84,6 +98,7 @@ class CreateAccount:
                 "OPENING_DATE": TIMESTAMP,
             }
             acc_data = pd.DataFrame.from_dict([acc_details])
+            print(acc_data)
             acc_data.to_csv(
                 f"{acc_data_path}/chart_of_accounts.csv",
                 mode="a",
@@ -94,23 +109,27 @@ class CreateAccount:
             # initiate the ledger
             Transaction().deposit(first_deposit, self.acc_no, new_acc=True)
         else:
-            print("Account already exist.")
+            print("Account already exist", end=" ")
             # show account details
             if any(acc_chart["NAME"] == name):
                 acc_details = acc_chart[acc_chart["NAME"] == name]
+                print("with Name : ", name)
             elif any(acc_chart["MOBILE_NO"] == mobile_no):
                 acc_details = acc_chart[acc_chart["MOBILE_NO"] == mobile_no]
-            self.acc_no = str(acc_details.iloc[0]["ACCOUNT_NO"])
-            #if more accounts with same name or mobile_no
-            if acc_details.shape[0]!=1:
-                print('more than one account with same name or mobile_no.')
-            
+                print("with Mobile_no : ", mobile_no)
+
+            self.acc_no = acc_details.iloc[0]["ACCOUNT_NO"]
+            # if more accounts with same name or mobile_no
+            if acc_details.shape[0] != 1:
+                print("more than one account with same name or mobile_no.")
+
             print(acc_details)
 
-    def generate_acc_no(self):
+    def __generate_acc_no(self):
         # TODO map acc_no with ID no
         print("generating account number...")
-        last_acc_no = pd.read_csv(f"{acc_data_path}/chart_of_accounts.csv")[
-            "ACCOUNT_NO"
-        ].max()
-        self.acc_no = f'{last_acc_no + 1}'
+        last_acc_no = pd.read_csv(
+            f"{acc_data_path}/chart_of_accounts.csv",
+            dtype=DATA_TYPES["ACC_CHART"],
+        )["ACCOUNT_NO"].max()
+        self.acc_no = last_acc_no + 1
