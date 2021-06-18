@@ -1,11 +1,11 @@
-# Manager
+# eManager
 A beginner's project to make a software for managing small businesses.
 
 ## Start to work
 ### With a virtual environment
 1. clone this directory in your system, enter the directory and Open in Terminal.
     ```sh
-    somnath@somnath:~/Documents/Manager$ 
+    somnath@somnath:~/Documents/eManager$ 
     ```
 3. to install virtualenv write in the terminal
     ```sh
