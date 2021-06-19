@@ -1,7 +1,7 @@
 # eManager
 A beginner's project to make a software for managing small businesses.
 
-## Start to work
+## How to Start working
 ### With a virtual environment
 1. clone this directory in your system, enter the directory and Open in Terminal.
     ```sh
