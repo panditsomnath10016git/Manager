@@ -1,6 +1,6 @@
 import os
 import uuid
-from emanager.accounting import ledger
+from emanager.accounting.ledger import Ledger
 
 acc_data_path = os.path.dirname(os.path.realpath(__file__)) + "/acc_data"
 
@@ -18,7 +18,7 @@ class Transaction:
             "REMARKS": remarks,
             "CREDITED": amount,
         }
-        ledger.write_transaction(payer, trans_details, new_acc=new_acc)
+        Ledger().write_transaction(payer, trans_details, new_acc=new_acc)
 
     def withdrawl(
         self, amount, benifactor, remarks="Self Withdrawl", new_acc=False
@@ -29,7 +29,7 @@ class Transaction:
             "REMARKS": remarks,
             "DEBITED": amount,
         }
-        ledger.write_transaction(benifactor, trans_details, new_acc=new_acc)
+        Ledger().write_transaction(benifactor, trans_details, new_acc=new_acc)
 
     def __transaction_id(self):
         print("generating transaction id...")

@@ -1,12 +1,13 @@
 import os
-from emanager.constants import TIMESTAMP, DATA_TYPES
+from typing import OrderedDict
+from emanager.constants import TIMESTAMP, DATA_TYPES, TREASURY_ACC_NO
 from emanager.accounting.transaction import Transaction
 import pandas as pd
 
 acc_data_path = os.path.dirname(os.path.realpath(__file__)) + "/acc_data"
 
 
-class Account(Transaction):
+class Account:
     def __init__(self, acc_no):
         print(f"account {acc_no} initiated.")
         self.acc_no = str(acc_no)
@@ -25,10 +26,10 @@ class Account(Transaction):
         return self.cr_balance
 
     def deposit(self, amount, **kwargs):
-        Transaction.deposit(self, amount, self.acc_no, **kwargs)
+        Transaction().deposit(amount, self.acc_no, **kwargs)
 
     def withdrawl(self, amount, **kwargs):
-        Transaction.withdrawl(self, amount, self.acc_no, **kwargs)
+        Transaction().withdrawl(amount, self.acc_no, **kwargs)
 
     def view_statement(self, upto=10):
         print(
@@ -48,7 +49,6 @@ class Account(Transaction):
         print("updating account details...")
         acc_details = self.details.to_dict()
         acc_details.update(kwargs)
-        print(acc_details)
         acc_chart = pd.read_csv(
             f"{acc_data_path}/chart_of_accounts.csv",
             dtype=DATA_TYPES["ACC_CHART"],
@@ -57,20 +57,6 @@ class Account(Transaction):
         values = list(acc_details.values())
         acc_chart.at[int(self.acc_no)] = values
         acc_chart.to_csv(f"{acc_data_path}/chart_of_accounts.csv")
-
-
-class Treasury(Account):
-    def __init__(self):
-        acc_no = "1000000001"
-        super().__init__(acc_no)
-
-    def check_vault_status(self):
-        vault = pd.read_csv(f"{acc_data_path}/{self.acc_no}.csv")
-        self.treasure_money = vault.tail(1).iloc[0]["CR_BALANCE"]
-        print(self.treasure_money)
-
-    def archive_ledger(self):
-        pass
 
 
 class CreateAccount:
@@ -88,15 +74,17 @@ class CreateAccount:
         if (not acc_chart.isin([name, mobile_no]).any().any()) or force_create:
             print("creating new acccount...")
             self.__generate_acc_no()
-            acc_details = {
-                "ACCOUNT_NO": self.acc_no,
-                "NAME": name,
-                "ADDRESS": address,
-                "MOBILE_NO": mobile_no,
-                "CR_BALANCE": first_deposit,
-                "LAST_UPDATED": TIMESTAMP,
-                "OPENING_DATE": TIMESTAMP,
-            }
+            acc_details = OrderedDict(
+                {
+                    "ACCOUNT_NO": self.acc_no,
+                    "NAME": name,
+                    "ADDRESS": address,
+                    "MOBILE_NO": mobile_no,
+                    "CR_BALANCE": first_deposit,
+                    "LAST_UPDATED": TIMESTAMP,
+                    "OPENING_DATE": TIMESTAMP,
+                }
+            )
             acc_data = pd.DataFrame.from_dict([acc_details])
             print(acc_data)
             acc_data.to_csv(
@@ -119,7 +107,7 @@ class CreateAccount:
                 print("with Mobile_no : ", mobile_no)
 
             self.acc_no = acc_details.iloc[0]["ACCOUNT_NO"]
-            # if more accounts with same name or mobile_no
+            # FOR more accounts with same name or mobile_no
             if acc_details.shape[0] != 1:
                 print("more than one account with same name or mobile_no.")
 
@@ -128,8 +116,14 @@ class CreateAccount:
     def __generate_acc_no(self):
         # TODO map acc_no with ID no
         print("generating account number...")
-        last_acc_no = pd.read_csv(
-            f"{acc_data_path}/chart_of_accounts.csv",
-            dtype=DATA_TYPES["ACC_CHART"],
-        )["ACCOUNT_NO"].max()
+        last_acc_no = (
+            pd.read_csv(
+                f"{acc_data_path}/chart_of_accounts.csv",
+                usecols=["ACCOUNT_NO"],
+                dtype=int,
+            )
+            .iloc[:, 0]
+            .max()
+        )
+        print(last_acc_no)
         self.acc_no = last_acc_no + 1
