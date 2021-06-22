@@ -1,6 +1,6 @@
 import os
-from typing import OrderedDict
-from emanager.constants import TIMESTAMP, DATA_TYPES, TREASURY_ACC_NO
+from emanager.constants import TIMESTAMP
+from emanager.utils.data_types import ACC_CHART
 from emanager.accounting.transaction import Transaction
 import pandas as pd
 
@@ -13,7 +13,7 @@ class Account:
         self.acc_no = str(acc_no)
         self.details = pd.read_csv(
             f"{acc_data_path}/chart_of_accounts.csv",
-            dtype=DATA_TYPES["ACC_CHART"],
+            dtype=ACC_CHART,
             index_col="ACCOUNT_NO",
         ).loc[int(acc_no)]
 
@@ -51,7 +51,7 @@ class Account:
         acc_details.update(kwargs)
         acc_chart = pd.read_csv(
             f"{acc_data_path}/chart_of_accounts.csv",
-            dtype=DATA_TYPES["ACC_CHART"],
+            dtype=ACC_CHART,
             index_col="ACCOUNT_NO",
         )
         values = list(acc_details.values())
@@ -62,29 +62,25 @@ class Account:
 class CreateAccount:
     """create account , add it to chart_of_accounts, start new ledger"""
 
-    # TODO two people can have same names
-
     def __init__(
         self, name, address, mobile_no, first_deposit=0.0, force_create=False
     ):
         acc_chart = pd.read_csv(
             f"{acc_data_path}/chart_of_accounts.csv",
-            dtype=DATA_TYPES["ACC_CHART"],
+            dtype=ACC_CHART,
         )
         if (not acc_chart.isin([name, mobile_no]).any().any()) or force_create:
             print("creating new acccount...")
             self.__generate_acc_no()
-            acc_details = OrderedDict(
-                {
-                    "ACCOUNT_NO": self.acc_no,
-                    "NAME": name,
-                    "ADDRESS": address,
-                    "MOBILE_NO": mobile_no,
-                    "CR_BALANCE": first_deposit,
-                    "LAST_UPDATED": TIMESTAMP,
-                    "OPENING_DATE": TIMESTAMP,
-                }
-            )
+            acc_details = {
+                "ACCOUNT_NO": self.acc_no,
+                "NAME": name,
+                "ADDRESS": address,
+                "MOBILE_NO": mobile_no,
+                "CR_BALANCE": first_deposit,
+                "LAST_UPDATED": TIMESTAMP,
+                "OPENING_DATE": TIMESTAMP,
+            }
             acc_data = pd.DataFrame.from_dict([acc_details])
             print(acc_data)
             acc_data.to_csv(

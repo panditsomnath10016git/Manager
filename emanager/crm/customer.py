@@ -1,6 +1,6 @@
 import os
-from emanager.constants import *
-import pandas as pd
+from emanager.constants import TIMESTAMP
+import pandas as pd 
 
 # import sqlite3
 
@@ -17,7 +17,9 @@ class Customer:
         self.check_status()
 
     def check_status(self):
-        c_data = pd.read_csv(f"{crm_file_path}/customer_data.csv", index_col="NAME")
+        c_data = pd.read_csv(
+            f"{crm_file_path}/customer_data.csv", index_col="NAME"
+        )
         try:
             self.id = c_data.loc[self.name, "ID"]
             self.have_id = True
@@ -27,7 +29,7 @@ class Customer:
             self.have_id = False
 
     def update_details(self, detail, new_value):
-        """Update details of a Customer"
+        """Update details of a Customer
 
         Parameters
         ------------
@@ -41,8 +43,12 @@ class Customer:
             detail = [detail]
             new_value = [new_value]
 
-        c_data = pd.read_csv(f"{crm_file_path}/customer_data.csv", index_col="ID")
-        c_data.at[self.id, detail + ["LAST_MODIFIED"]] = new_value + [TIMESTAMP]
+        c_data = pd.read_csv(
+            f"{crm_file_path}/customer_data.csv", index_col="ID"
+        )
+        c_data.at[self.id, detail + ["LAST_MODIFIED"]] = new_value + [
+            TIMESTAMP
+        ]
         c_data.to_csv(f"{crm_file_path}/customer_data.csv")
         self.check_status()
 

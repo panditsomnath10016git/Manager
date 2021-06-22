@@ -1,5 +1,11 @@
 # Using only for testing
 from emanager.constants import *
-from emanager.accounting import *
-from emanager.crm import *
-from emanager.hr import *
+
+from emanager.accounting.accounts import *
+from emanager.accounting.bank_core import *
+
+from emanager.crm.customer import *
+
+from emanager.hr.worker import *
+
+from emanager.utils.directories import *
