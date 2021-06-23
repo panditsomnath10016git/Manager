@@ -63,17 +63,24 @@ class CreateAccount:
     """create account , add it to chart_of_accounts, start new ledger"""
 
     def __init__(
-        self, name, address, mobile_no, first_deposit=0.0, force_create=False
+        self,
+        name,
+        address,
+        mobile_no,
+        first_deposit=0.0,
+        force_create=False,
+ #       **kwargs,
     ):
+      #  super().__init__(**kwargs)
         acc_chart = pd.read_csv(
             f"{acc_data_path}/chart_of_accounts.csv",
             dtype=ACC_CHART,
         )
         if (not acc_chart.isin([name, mobile_no]).any().any()) or force_create:
             print("creating new acccount...")
-            self.__generate_acc_no()
+            
             acc_details = {
-                "ACCOUNT_NO": self.acc_no,
+                "ACCOUNT_NO": self.__generate_acc_no(),
                 "NAME": name,
                 "ADDRESS": address,
                 "MOBILE_NO": mobile_no,
@@ -121,5 +128,5 @@ class CreateAccount:
             .iloc[:, 0]
             .max()
         )
-        print(last_acc_no)
         self.acc_no = last_acc_no + 1
+        return self.acc_no
