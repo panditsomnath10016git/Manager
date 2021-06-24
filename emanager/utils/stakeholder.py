@@ -1,4 +1,5 @@
 import pandas as pd
+import pickle as pkl
 from emanager.constants import TIMESTAMP
 from emanager.utils.data_types import WORKER_DATA, CUSTOMER_DATA, SELLER_DATA
 from emanager.accounting.accounts import CreateAccount
@@ -15,7 +16,7 @@ class StakeHolder:
 
     def __init__(self, path_to_data_file) -> None:
         """self.name, self.data_format must be declared in child class"""
-        
+
         self.data_path = path_to_data_file
         self.check_database()
 
@@ -59,32 +60,31 @@ class StakeHolder:
         s_data.to_csv(self.data_path)
         print(f"{self._id} details updated.")
         self.check_database()
-        #TODO update the account details also
+        # TODO update the account details also < map id with acc_no in add
 
 
 class AddStakeHolder:
-    """Supplies common methods for adding customer, worker, supplier"""
+    """Supplies common methods for adding customer, worker, supplier.
+    Does NOT check for existing stakeholder with same name or mobile_no."""
 
     # TODO replace loose words like type and group
     def __init__(self, stakeholder_type):
-        """self.name, self.details from the child class"""
+        """self.name, self.details, self.data_dir
+        has to be decleared in child classes"""
 
         self.mobile_no = self.details["MOBILE_NO"]
         self.address = self.details["ADDRESS"]
-        self.__type = STAKEHOLDER_TYPE[str(stakeholder_type)]
+        self._type = STAKEHOLDER_TYPE[str(stakeholder_type)]
         # TODO self.check_existance_in_db()
 
         self.details.update(ID=self.__generate_id(), LAST_MODIFIED=TIMESTAMP)
         self.details_data = pd.DataFrame([self.details])
         print(self.details_data)
 
-    def check_existance_in_db(self):
-        pass
-
     def __generate_id(self):
         ts = TIMESTAMP.strftime("%y%m%d%M%S")
-        self.id_no = self.__type + self.details["GROUP"][0] + ts
-        return self.id_no
+        self._id = self._type + self.details["GROUP"][0] + ts
+        return self._id
 
     def add_entry(self, path_to_data_file):
         self.details_data.to_csv(
@@ -96,7 +96,13 @@ class AddStakeHolder:
         self.acc = CreateAccount(
             self.name, self.address, self.mobile_no, **kwargs
         )
+        self._map_id_with_acc_no()
         return self.acc.acc_no
 
-    def __map_id_with_acc_no(self):
-        pass
+    def _map_id_with_acc_no(self):
+        file = f"{self.data_dir}/acc_map"
+        with open(file, "rb") as mapfile:
+            map_data = pkl.load(mapfile)
+        map_data[self._id] = self.acc.acc_no
+        with open(file, "wb") as mapfile:
+            pkl.dump(map_data, mapfile)

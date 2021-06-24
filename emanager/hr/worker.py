@@ -53,7 +53,7 @@ class AddWorker(AddStakeHolder):
     ):
         print(f"Adding new Worker {name}....")
         self.name = name
-        
+
         self.details = deepcopy(WORKER_DATA)
         self.details.update(
             {

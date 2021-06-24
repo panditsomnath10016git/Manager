@@ -1,3 +1,5 @@
+# generate the directories during setup
+
 import os
 
 INITIAL_FILES = {

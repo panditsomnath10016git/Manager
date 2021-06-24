@@ -1,6 +1,7 @@
 import os
+from copy import deepcopy
 from emanager.constants import TIMESTAMP
-from emanager.utils.data_types import ACC_CHART
+from emanager.utils.data_types import ACC_CHART_DATA
 from emanager.accounting.transaction import Transaction
 import pandas as pd
 
@@ -13,7 +14,7 @@ class Account:
         self.acc_no = str(acc_no)
         self.details = pd.read_csv(
             f"{acc_data_path}/chart_of_accounts.csv",
-            dtype=ACC_CHART,
+            dtype=ACC_CHART_DATA,
             index_col="ACCOUNT_NO",
         ).loc[int(acc_no)]
 
@@ -25,11 +26,11 @@ class Account:
         )
         return self.cr_balance
 
-    def deposit(self, amount, **kwargs):
-        Transaction().deposit(amount, self.acc_no, **kwargs)
+    def deposit(self, amount, **remarks):
+        Transaction().deposit(amount, self.acc_no, **remarks)
 
-    def withdrawl(self, amount, **kwargs):
-        Transaction().withdrawl(amount, self.acc_no, **kwargs)
+    def withdrawl(self, amount, **remarks):
+        Transaction().withdrawl(amount, self.acc_no, **remarks)
 
     def view_statement(self, upto=10):
         print(
@@ -51,7 +52,7 @@ class Account:
         acc_details.update(kwargs)
         acc_chart = pd.read_csv(
             f"{acc_data_path}/chart_of_accounts.csv",
-            dtype=ACC_CHART,
+            dtype=ACC_CHART_DATA,
             index_col="ACCOUNT_NO",
         )
         values = list(acc_details.values())
@@ -69,27 +70,26 @@ class CreateAccount:
         mobile_no,
         first_deposit=0.0,
         force_create=False,
- #       **kwargs,
     ):
-      #  super().__init__(**kwargs)
         acc_chart = pd.read_csv(
             f"{acc_data_path}/chart_of_accounts.csv",
-            dtype=ACC_CHART,
+            dtype=ACC_CHART_DATA,
         )
         if (not acc_chart.isin([name, mobile_no]).any().any()) or force_create:
-            print("creating new acccount...")
-            
-            acc_details = {
-                "ACCOUNT_NO": self.__generate_acc_no(),
-                "NAME": name,
-                "ADDRESS": address,
-                "MOBILE_NO": mobile_no,
-                "CR_BALANCE": first_deposit,
-                "LAST_UPDATED": TIMESTAMP,
-                "OPENING_DATE": TIMESTAMP,
-            }
+            print("creating new account...")
+            acc_details = deepcopy(ACC_CHART_DATA)
+            acc_details.update(
+                {
+                    "ACCOUNT_NO": self.__generate_acc_no(),
+                    "NAME": name,
+                    "ADDRESS": address,
+                    "MOBILE_NO": mobile_no,
+                    "CR_BALANCE": 0.0,
+                    "LAST_UPDATED": TIMESTAMP,
+                    "OPENING_DATE": TIMESTAMP,
+                }
+            )
             acc_data = pd.DataFrame.from_dict([acc_details])
-            print(acc_data)
             acc_data.to_csv(
                 f"{acc_data_path}/chart_of_accounts.csv",
                 mode="a",

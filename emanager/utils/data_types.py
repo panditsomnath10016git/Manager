@@ -1,18 +1,11 @@
-ACC_CHART = {
-    "ACCOUNT_NO": int,
-    "NAME": object,
-    "ADDRESS": object,
-    "MOBILE_NO": object,
-    "CR_BALANCE": float,
-}
 
-ACC_DATA = {
+ACC_CHART_DATA = {
     "ACCOUNT_NO": int,
     "NAME": object,
     "ADDRESS": object,
     "MOBILE_NO": object,
     "CR_BALANCE": float,
-    "LAST_MODIFIED": object,
+    "LAST_UPDATED": object,
     "OPENING_DATE": object,
 }
 
