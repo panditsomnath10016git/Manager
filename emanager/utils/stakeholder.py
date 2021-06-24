@@ -14,6 +14,8 @@ class StakeHolder:
     """Supplies common methods for initiating customer, worker, supplier"""
 
     def __init__(self, path_to_data_file) -> None:
+        """self.name, self.data_format must be declared in child class"""
+        
         self.data_path = path_to_data_file
         self.check_database()
 
@@ -57,6 +59,7 @@ class StakeHolder:
         s_data.to_csv(self.data_path)
         print(f"{self._id} details updated.")
         self.check_database()
+        #TODO update the account details also
 
 
 class AddStakeHolder:
@@ -64,10 +67,8 @@ class AddStakeHolder:
 
     # TODO replace loose words like type and group
     def __init__(self, stakeholder_type):
-        """will inherit details from the child class"""
+        """self.name, self.details from the child class"""
 
-        print(f"Adding {stakeholder_type}...")
-        self.name = self.details["NAME"]
         self.mobile_no = self.details["MOBILE_NO"]
         self.address = self.details["ADDRESS"]
         self.__type = STAKEHOLDER_TYPE[str(stakeholder_type)]

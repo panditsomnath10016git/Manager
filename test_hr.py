@@ -5,12 +5,12 @@ worker_name = "Worker 1"
 worker1 = Worker(worker_name)
 
 if not worker1.have_id:
-    address = "address1"  # str(input("Enter Address.. : "))
+    address = "address1"
     age = 46
-    mobile_no = "7908795345"  # str(input("Mobile No. : "))
+    mobile_no = "7908795345"
     join_date = "20/03/2017"
     pay_r = 250.0
-    group = "Owner"  # str(input("Worker Group :"))
+    group = "Owner"
     AddWorker(
         worker_name, age, address, mobile_no, join_date, pay_r, group=group
     )

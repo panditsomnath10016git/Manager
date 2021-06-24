@@ -51,6 +51,9 @@ class AddWorker(AddStakeHolder):
         group=WORKER_GROUP["P"],
         **kwargs,
     ):
+        print(f"Adding new Worker {name}....")
+        self.name = name
+        
         self.details = deepcopy(WORKER_DATA)
         self.details.update(
             {

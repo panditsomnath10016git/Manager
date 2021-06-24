@@ -26,4 +26,4 @@ A beginner's project to make a software for managing small businesses.
     Now, run the codes as usual.
 
 
-test.py, test_acc.py etc are being used for testing modules.
+test_crm.py, test_acc.py etc are being used for testing modules.
