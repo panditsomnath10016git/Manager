@@ -1,48 +1,47 @@
-
 ACC_CHART = {
-    "ACCOUNT_NO": 'int',
-    "NAME": 'str',
-    "ADDRESS": 'str',
-    "MOBILE_NO": 'str',
-    "CR_BALANCE": 'float',
+    "ACCOUNT_NO": int,
+    "NAME": object,
+    "ADDRESS": object,
+    "MOBILE_NO": object,
+    "CR_BALANCE": float,
 }
 
 ACC_DATA = {
-    "ACCOUNT_NO": 'str',
-    "NAME": 'str',
-    "ADDRESS": 'str',
-    "MOBILE_NO": 'str',
-    "CR_BALANCE": 'float',
-    "LAST_MODIFIED": 'str',
-    "OPENING_DATE": 'str',
+    "ACCOUNT_NO": int,
+    "NAME": object,
+    "ADDRESS": object,
+    "MOBILE_NO": object,
+    "CR_BALANCE": float,
+    "LAST_MODIFIED": object,
+    "OPENING_DATE": object,
 }
 
 WORKER_DATA = {
-    "ID": 'str',
-    "NAME": 'str',
-    "AGE": 'int',
-    "ADDRESS": 'str',
-    "MOBILE_NO": 'str',
-    "JOIN_DATE": 'str',
-    "PAY_RATE": 'float',
-    "GROUP": 'str',
-    "LAST_MODIFIED": 'str',
+    "ID": object,
+    "NAME": object,
+    "AGE": int,
+    "ADDRESS": object,
+    "MOBILE_NO": object,
+    "JOIN_DATE": object,
+    "PAY_RATE": float,
+    "GROUP": object,
+    "LAST_MODIFIED": object,
 }
 
 CUSTOMER_DATA = {
-    "ID": 'str',
-    "NAME": 'str',
-    "ADDRESS": 'str',
-    "MOBILE_NO": 'str',
-    "GROUP": 'str',
-    "LAST_MODIFIED": 'str',
+    "ID": object,
+    "NAME": object,
+    "ADDRESS": object,
+    "MOBILE_NO": object,
+    "GROUP": object,
+    "LAST_MODIFIED": object,
 }
 
 SELLER_DATA = {
-    "ID": 'str',
-    "NAME": 'str',
-    "ADDRESS": 'str',
-    "MOBILE_NO": 'str',
-    "GROUP": 'str',
-    "LAST_MODIFIED": 'str',
+    "ID": object,
+    "NAME": object,
+    "ADDRESS": object,
+    "MOBILE_NO": object,
+    "GROUP": object,
+    "LAST_MODIFIED": object,
 }

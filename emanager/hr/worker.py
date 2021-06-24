@@ -1,4 +1,5 @@
 import os
+from copy import deepcopy
 from emanager.utils.stakeholder import *
 from emanager.utils.data_types import WORKER_DATA
 
@@ -12,6 +13,7 @@ class Worker(StakeHolder):
         print(f"Worker {name}  initiated...")
         self.name = name
         self._type = "WORKER"
+        self.data_format = WORKER_DATA
         super().__init__(f"{hr_data_path}/worker_data.csv")
 
     def _get_data(self):
@@ -20,7 +22,8 @@ class Worker(StakeHolder):
         self.check_balance()
 
     def update_pay_rate(self, new_rate):
-        self.update_details(self, PAY_RATE=new_rate)
+        self.update_details(PAY_RATE=new_rate)
+        print("Pay Rate Updated.")
 
     def check_attendance(self):
         pass
@@ -46,10 +49,9 @@ class AddWorker(AddStakeHolder):
         join_date,
         pay_rate,
         group=WORKER_GROUP["P"],
-        **kwargs
+        **kwargs,
     ):
-
-        self.details = WORKER_DATA
+        self.details = deepcopy(WORKER_DATA)
         self.details.update(
             {
                 "NAME": name,
@@ -61,6 +63,7 @@ class AddWorker(AddStakeHolder):
                 "GROUP": group,
             }
         )
+
         super().__init__(stakeholder_type="WORKER")
         self.add_entry(f"{hr_data_path}/worker_data.csv")
         self.open_account(**kwargs)

@@ -24,9 +24,9 @@ class StakeHolder:
         print("checking database...")
         s_data = pd.read_csv(
             self.data_path,
+            dtype=self.data_format,
             index_col="NAME",
             sep=",",
-            dtype=eval(f"{self._type}_DATA"),
         )
         try:
             self._id = s_data.loc[self.name, "ID"]
@@ -34,7 +34,7 @@ class StakeHolder:
             self.have_id = True
             self.details = s_data.loc[self.name, :]
             print(self.details)
-        except:
+        except KeyError:
             print(f"{self.name} is not in database.")
             self.have_id = False
 
@@ -42,20 +42,25 @@ class StakeHolder:
         """Update details of a stakeholder"""
 
         # TODO check validity of kwargs
-        print("updating worker detalils...")
-        s_data = pd.read_csv(self.path, index_col="ID")
+        print(f"updating {self._id} detalils...")
+        s_data = pd.read_csv(
+            self.data_path, index_col="ID", sep=",", dtype=self.data_format
+        )
         self.details = s_data.loc[self._id, :]
         s_details = self.details.to_dict()
         s_details.update(kwargs)
         s_details.update(LAST_MODIFIED=TIMESTAMP)
+
         values = list(s_details.values())
-        s_data.at[self.id] = values
+        s_data.at[self._id] = values
+        # ?any way to insert only the changed data rather than readding all
         s_data.to_csv(self.data_path)
+        print(f"{self._id} details updated.")
         self.check_database()
 
 
 class AddStakeHolder:
-    """Supplies common method for adding customer, worker, supplier"""
+    """Supplies common methods for adding customer, worker, supplier"""
 
     # TODO replace loose words like type and group
     def __init__(self, stakeholder_type):
@@ -66,7 +71,7 @@ class AddStakeHolder:
         self.mobile_no = self.details["MOBILE_NO"]
         self.address = self.details["ADDRESS"]
         self.__type = STAKEHOLDER_TYPE[str(stakeholder_type)]
-        self.check_existance_in_db()
+        # TODO self.check_existance_in_db()
 
         self.details.update(ID=self.__generate_id(), LAST_MODIFIED=TIMESTAMP)
         self.details_data = pd.DataFrame([self.details])
@@ -92,5 +97,5 @@ class AddStakeHolder:
         )
         return self.acc.acc_no
 
-    def map_id_with_acc_no(self):
+    def __map_id_with_acc_no(self):
         pass
