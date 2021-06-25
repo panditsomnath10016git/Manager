@@ -121,7 +121,7 @@ class AddStakeHolder:
         self.acc = CreateAccount(
             self.name, self.address, self.mobile_no, **kwargs
         )
-        fop.map_acc(self.data_dir, {self.id_: self.acc.acc_no})
+        fop.map_acc(self.data_dir, self.id_, self.acc.acc_no)
         return self.acc.acc_no
 
 

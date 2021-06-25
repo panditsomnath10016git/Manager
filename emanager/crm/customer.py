@@ -11,8 +11,7 @@ CUSTOMER_GROUP = {
     "G": "Government",
 }
 
-# TODO initating customer with name need to be change with id
-# and for checking customer existance a different module to be created
+
 class Customer(StakeHolder):
     def __init__(self, id_):
         print(f"Customer {id_}  initiated...")
