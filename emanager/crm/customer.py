@@ -1,11 +1,9 @@
-import os
 from copy import deepcopy
 from emanager.utils.stakeholder import *
 from emanager.utils.data_types import CUSTOMER_DATA
+from emanager.utils.directories import CRM_DATA_DIR
 
-
-crm_data_path = os.path.dirname(os.path.realpath(__file__)) + "/crm_data"
-
+CRM_DATA_FILE = CRM_DATA_DIR + "/customer_data.csv"
 CUSTOMER_GROUP = {
     "I": "Individual",
     "A": "Association",
@@ -13,15 +11,15 @@ CUSTOMER_GROUP = {
     "G": "Government",
 }
 
-
+# TODO initating customer with name need to be change with id
+# and for checking customer existance a different module to be created
 class Customer(StakeHolder):
-    def __init__(self, name):
-        print(f"Customer {name}  initiated...")
-        self.name = name
-        self._type = "CUSTOMER"
+    def __init__(self, id_):
+        print(f"Customer {id_}  initiated...")
+        self.id_ = id_
         self.data_format = CUSTOMER_DATA
-        self.data_dir = crm_data_path
-        super().__init__(f"{self.data_dir}/customer_data.csv")
+        self.data_dir = CRM_DATA_DIR
+        super().__init__("customer_data.csv")
 
     def check_balance(self):
         pass
@@ -35,7 +33,7 @@ class AddCustomer(AddStakeHolder):
     ):
         print(f"Adding new Customer {name}....")
         self.name = name
-        self.data_dir = crm_data_path
+        self.data_dir = CRM_DATA_DIR
         self.details = deepcopy(CUSTOMER_DATA)
         self.details.update(
             {

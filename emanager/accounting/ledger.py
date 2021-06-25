@@ -53,7 +53,10 @@ class Ledger:
         acc_chart = pd.read_csv(
             f"{acc_data_path}/chart_of_accounts.csv", index_col="ACCOUNT_NO"
         )
-        acc_chart.loc[acc_no, "CR_BALANCE"] = new_cr_balance
+        acc_chart.loc[acc_no, ["CR_BALANCE", "LAST_UPDATED"]] = [
+            new_cr_balance,
+            TIMESTAMP,
+        ]
         acc_chart.to_csv(f"{acc_data_path}/chart_of_accounts.csv")
         print(acc_chart.loc[acc_no, :])
 

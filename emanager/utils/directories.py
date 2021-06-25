@@ -1,12 +1,14 @@
 # generate the directories during setup
 
 import os
+from emanager.constants import BASE_DIR
 
-INITIAL_FILES = {
-    "hr": "./emanager/hr/hr_data/list_of_workers.csv",
-    "crm": "./emanager/crm/customer_data/list_of_customer.csv",
-    "accounting": "./emanager/accounting/acc_data/chart_of_accounts.csv",
-}
+
+HR_DATA_DIR = os.path.join(BASE_DIR, "hr/hr_data")
+CRM_DATA_DIR = os.path.join(BASE_DIR, "crm/crm_data")
+ACCOUNTING_DATA_DIR = os.path.join(BASE_DIR, "accounting/acc_data")
+
+MAPFILE_DIRS = [HR_DATA_DIR, CRM_DATA_DIR]
 
 
 def initialize_directories():

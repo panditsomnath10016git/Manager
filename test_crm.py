@@ -1,23 +1,24 @@
 from emanager.imports import *
 
-cstmr_name = "Customer 2"
-cstmr1 = Customer(cstmr_name)
+cstmr_name = "Customer 1"
+id_ = check_existance_in_db(CRM_DATA_FILE, cstmr_name)
 
-if not cstmr1.have_id:
-    address = "address2"
-    mobile_no = "784551852"
+if id_ is None:
+    address = "address1"
+    mobile_no = "784512752"
     group = CUSTOMER_GROUP["I"]
-    AddCustomer(
+    cstmr = AddCustomer(
         cstmr_name,
         address,
         mobile_no,
         group=group,
-        first_deposit=150,
-     #   force_create=True,
+        first_deposit=1500,
+        #   force_create=True,
     )
-    cstmr1 = Customer(cstmr_name)
+    id_ = cstmr.id_
 
-cstmr1.update_details(
-    GROUP=CUSTOMER_GROUP["A"], MOBILE_NO="756454831", ADDRESS="new address2"
+cstmr = Customer(id_)
+
+cstmr.update_details(
+    GROUP=CUSTOMER_GROUP["A"], MOBILE_NO="956456831", ADDRESS="new address1"
 )
-

@@ -1,9 +1,8 @@
-import os
 from copy import deepcopy
 from emanager.utils.stakeholder import *
 from emanager.utils.data_types import WORKER_DATA
+from emanager.utils.directories import HR_DATA_DIR
 
-hr_data_path = os.path.dirname(os.path.realpath(__file__)) + "/hr_data"
 
 WORKER_GROUP = {"P": "Permanent", "T": "Temporary"}
 
@@ -14,7 +13,8 @@ class Worker(StakeHolder):
         self.name = name
         self._type = "WORKER"
         self.data_format = WORKER_DATA
-        super().__init__(f"{hr_data_path}/worker_data.csv")
+        self.data_dir = HR_DATA_DIR
+        super().__init__("worker_data.csv")
 
     def _get_data(self):
         self.check_database()
@@ -49,11 +49,11 @@ class AddWorker(AddStakeHolder):
         join_date,
         pay_rate,
         group=WORKER_GROUP["P"],
-        **kwargs,
+        **acc_kwargs,
     ):
         print(f"Adding new Worker {name}....")
         self.name = name
-
+        self.data_dir = HR_DATA_DIR
         self.details = deepcopy(WORKER_DATA)
         self.details.update(
             {
@@ -68,5 +68,5 @@ class AddWorker(AddStakeHolder):
         )
 
         super().__init__(stakeholder_type="WORKER")
-        self.add_entry(f"{hr_data_path}/worker_data.csv")
-        self.open_account(**kwargs)
+        self.add_entry(f"{self.data_dir}/worker_data.csv")
+        self.open_account(**acc_kwargs)
