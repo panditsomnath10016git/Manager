@@ -1,7 +1,7 @@
-from emanager.crm.customer import *
+from emanager.sell.customer import *
 
 cstmr_name = "Customer 1"
-id_ = check_stakeholder_existance(CRM_DATA_FILE_PATH, cstmr_name)
+id_ = check_stakeholder_existance(SELL_DATA_FILE_PATH, cstmr_name)
 
 if id_ is None:
     address = "address2"
