@@ -1,9 +1,12 @@
 from copy import deepcopy
-from emanager.utils.stakeholder import *
+
+import emanager.accounting.accounts as acc
 from emanager.utils.data_types import CUSTOMER_DATA
 from emanager.utils.directories import CRM_DATA_DIR
+from emanager.utils.stakeholder import *
 
-CRM_DATA_FILE = CRM_DATA_DIR + "/customer_data.csv"
+CRM_DATA_FILE_NAME = "customer_data.csv"
+CRM_DATA_FILE_PATH = f"{CRM_DATA_DIR}/{CRM_DATA_FILE_NAME}"
 CUSTOMER_GROUP = {
     "I": "Individual",
     "A": "Association",
@@ -18,7 +21,7 @@ class Customer(StakeHolder):
         self.id_ = id_
         self.data_format = CUSTOMER_DATA
         self.data_dir = CRM_DATA_DIR
-        super().__init__("customer_data.csv")
+        super().__init__(CRM_DATA_FILE_NAME)
 
     def check_balance(self):
         pass
@@ -43,5 +46,8 @@ class AddCustomer(AddStakeHolder):
             }
         )
         super().__init__(stakeholder_type="CUSTOMER")
-        self.add_entry(f"{self.data_dir}/customer_data.csv")
-        self.open_account(**acc_kwargs)
+        self.add_entry(CRM_DATA_FILE_PATH)
+
+        acc_no = acc.check_account_existance(self.name, self.mobile_no)
+        if acc_no is None:
+            self.open_account(**acc_kwargs)

@@ -1,9 +1,7 @@
 import pandas as pd
 import emanager.utils.file_ops as fop
+import emanager.accounting.accounts as acc
 from emanager.constants import TIMESTAMP
-from emanager.utils.directories import ACCOUNTING_DATA_DIR
-from emanager.utils.data_types import ACC_CHART_DATA
-from emanager.accounting.accounts import CreateAccount
 
 STAKEHOLDER_TYPE = {
     "WORKER": "W",
@@ -17,7 +15,7 @@ class StakeHolder:
 
     def __init__(self, stakeholder_data_filename) -> None:
         """self.id_, self.data_format, self.data_dir
-        must be declared in child class"""
+        must be declared in child classes of StakeHolder"""
 
         self.data_path = f"{self.data_dir}/{stakeholder_data_filename}"
         self.check_details()
@@ -58,46 +56,29 @@ class StakeHolder:
         s_data.to_csv(self.data_path)
         print(f"{self.id_} details updated.")
         if update_acc:
-            self._update_acc_detalis(**s_details)
+            self._update_acc_details(**s_details)
 
         self.check_details()
 
-    def _update_acc_detalis(self, **new_details):
+    def _update_acc_details(self, **new_details):
         """Upadate the account details of the StakeHolder"""
 
-        acc_chart_path = f"{ACCOUNTING_DATA_DIR}/chart_of_accounts.csv"
-        acc_chart = pd.read_csv(
-            acc_chart_path,
-            index_col="ACCOUNT_NO",
-            sep=",",
-            dtype=ACC_CHART_DATA,
-        )
-        # Update only the sensible details
-        updateable = dict(NAME="", ADDRESS="", MOBILE_NO="")
-        a_details = dict(
-            (k, new_details[k]) for k in updateable.keys() & new_details.keys()
-        )
-        acc_chart.at[self.acc_no, list(a_details.keys())] = list(
-            a_details.values()
-        )
-        acc_chart.to_csv(acc_chart_path)
-        print(f"{self.acc_no} account details updated.")
+        acc.Account(self.acc_no).update_details(**new_details)
 
 
 class AddStakeHolder:
     """SUPPLIES common METHODS for adding customer, worker, supplier.
-    This does NOT check for existing stakeholder in database check with
-    'check_existance_in' method"""
+    This does NOT check for existing stakeholder in database, check with
+    'check_stakeholder_existance' method"""
 
     # TODO replace loose words like type and group
     def __init__(self, stakeholder_type):
         """self.name, self.details, self.data_dir
-        has to be decleared in child classes"""
+        has to be decleared in child classes of AddStakeHolder"""
 
         self.mobile_no = self.details["MOBILE_NO"]
         self.address = self.details["ADDRESS"]
-        self._type = STAKEHOLDER_TYPE[str(stakeholder_type)]
-        # TODO self.check_existance_in_db()
+        self._type = STAKEHOLDER_TYPE[stakeholder_type]
 
         self.details.update(ID=self.__generate_id(), LAST_MODIFIED=TIMESTAMP)
         self.details_data = pd.DataFrame([self.details])
@@ -109,7 +90,7 @@ class AddStakeHolder:
         return self.id_
 
     def add_entry(self, path_to_data_file):
-        """Appends the details of worker(self.detalis) to the file"""
+        """Appends the details of worker(self.details) to the file"""
 
         self.details_data.to_csv(
             path_to_data_file, mode="a", header=False, index=False
@@ -118,15 +99,17 @@ class AddStakeHolder:
     def open_account(self, **kwargs):
         """Open new account. Returns: acc_no"""
 
-        self.acc = CreateAccount(
+        acc_no = acc.CreateAccount(
             self.name, self.address, self.mobile_no, **kwargs
-        )
-        fop.map_acc(self.data_dir, self.id_, self.acc.acc_no)
-        return self.acc.acc_no
+        ).acc_no
+        fop.map_acc(self.data_dir, self.id_, acc_no)
+        return acc_no
 
 
-def check_existance_in_db(path_to_db, name):
+def check_stakeholder_existance(path_to_db, name):
     "If found returns 'id', else 'None'"
+    # TODO a dynamic method which returns details with
+    # each keystroke in entrybox of the UI.
     data = pd.read_csv(
         path_to_db,
         index_col="NAME",

@@ -10,7 +10,6 @@ class Ledger:
         """updates ledgers with transaction details"""
 
         print("writing transaction..")
-        self.__acc_no = acc_no
         trans_data = {
             "DATE": TIMESTAMP,
             "TRANSACTION_ID": " ",
@@ -30,7 +29,7 @@ class Ledger:
 
         print(f"writing {acc_no} ledger...")
         if not new_acc:
-            cr_balance = self.get_cr_balance(acc_no)
+            cr_balance = self._get_cr_balance(acc_no)
             write_mode = "a"
         else:
             cr_balance = 0.0
@@ -46,10 +45,10 @@ class Ledger:
             header=new_acc,
             index=False,
         )
-        self.update_cr_balance_in_chart(acc_no, new_cr_balance)
+        self._update_cr_balance_in_chart(acc_no, new_cr_balance)
 
-    # TODO move to bank_core
-    def update_cr_balance_in_chart(self, acc_no, new_cr_balance):
+    # maybe move to bank_core
+    def _update_cr_balance_in_chart(self, acc_no, new_cr_balance):
         acc_chart = pd.read_csv(
             f"{acc_data_path}/chart_of_accounts.csv", index_col="ACCOUNT_NO"
         )
@@ -58,9 +57,9 @@ class Ledger:
             TIMESTAMP,
         ]
         acc_chart.to_csv(f"{acc_data_path}/chart_of_accounts.csv")
-        print(acc_chart.loc[acc_no, :])
+        # print(acc_chart.loc[acc_no, :])
 
-    def get_cr_balance(self, acc_no):
+    def _get_cr_balance(self, acc_no):
         return (
             pd.read_csv(
                 f"{acc_data_path}/{acc_no}.csv", usecols=["CR_BALANCE"]
