@@ -1,3 +1,4 @@
+import os
 import tkinter as tk
 
 from tkinter import ttk
@@ -8,7 +9,8 @@ from emanager.utils.directories import UI_ICONS_DIR
 
 
 def set_title(master):
-    master.iconbitmap(f"{UI_ICONS_DIR}/icon.ico")
+    if os.name == "nt":
+        master.iconbitmap(f"{UI_ICONS_DIR}/icon.ico")
     master.title("eManager")
 
 
@@ -40,8 +42,8 @@ class LoginWindow(tk.Tk):
         frm_input = tk.Frame(self)
         lbl_username = tk.Label(frm_input, text="Username:", pady=5)
         lbl_pass = tk.Label(frm_input, text="Password:", pady=5)
-        self.username = tk.Entry(frm_input, width=40)
-        self.password = tk.Entry(frm_input, width=40, show="*")
+        self.username = tk.Entry(frm_input, width=30)
+        self.password = tk.Entry(frm_input, width=30, show="*")
 
         lbl_username.grid(row=0, column=0)
         self.username.grid(row=0, column=1)
