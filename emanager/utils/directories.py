@@ -12,6 +12,8 @@ ACCOUNTING_DATA_DIR = os.path.join(BASE_DIR, "accounting/acc_data")
 
 MAPFILE_DIRS = [HR_DATA_DIR, BUY_DATA_DIR, CRM_DATA_DIR, SELL_DATA_DIR]
 
+UI_ICONS_DIR = os.path.join(BASE_DIR, "UI/icons")
+
 
 def initialize_directories():
     pass
