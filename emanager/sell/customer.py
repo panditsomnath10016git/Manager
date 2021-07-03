@@ -23,9 +23,6 @@ class Customer(StakeHolder):
         self.data_dir = SELL_DATA_DIR
         super().__init__(SELL_DATA_FILE_NAME)
 
-    def check_balance(self):
-        pass
-
 
 class AddCustomer(AddStakeHolder):
     """Add new customers to database"""
@@ -47,7 +44,7 @@ class AddCustomer(AddStakeHolder):
         )
         super().__init__(stakeholder_type="CUSTOMER")
         self.add_entry(SELL_DATA_FILE_PATH)
-
+        # TODO find proper way to connet to ui
         acc_no = acc.check_account_existance(self.name, self.mobile_no)
         if acc_no is None:
             self.open_account(**acc_kwargs)

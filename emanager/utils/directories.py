@@ -15,5 +15,11 @@ MAPFILE_DIRS = [HR_DATA_DIR, BUY_DATA_DIR, CRM_DATA_DIR, SELL_DATA_DIR]
 UI_ICONS_DIR = os.path.join(BASE_DIR, "UI/icons")
 
 
+def guarantee_existence(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
+    return os.path.abspath(path)
+
+
 def initialize_directories():
     pass

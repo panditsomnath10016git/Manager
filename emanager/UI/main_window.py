@@ -8,10 +8,10 @@ from emanager.UI.frames import DashBoard
 from emanager.utils.directories import UI_ICONS_DIR
 
 
-def set_title(master):
+def set_title(master, title="eManager"):
     if os.name == "nt":
         master.iconbitmap(f"{UI_ICONS_DIR}/icon.ico")
-    master.title("eManager")
+    master.title(title)
 
 
 class App(tk.Tk):

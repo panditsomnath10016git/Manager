@@ -25,7 +25,7 @@ class StakeHolder:
         update the status of stakerholder object"""
 
         print("checking database...")
-        self.acc_no = fop.get_acc_no(self.data_dir, self.id_)
+        self.acc_no = self.get_acc_no()
         s_data = pd.read_csv(
             self.data_path,
             dtype=self.data_format,
@@ -36,6 +36,9 @@ class StakeHolder:
         self.details = s_data.loc[self.id_, :]
         print(self.details)
         print("Account no : ", self.acc_no)
+
+    def account_balance(self):
+        return acc.Account(self.acc_no).get_cr_balance()
 
     def update_details(self, update_acc=True, **kwargs):
         """Update details of a stakeholder"""
@@ -65,6 +68,12 @@ class StakeHolder:
 
         acc.Account(self.acc_no).update_details(**new_details)
 
+    def get_acc_no(self):
+        acc_no = pd.read_csv(
+            f"{self.data_dir}/acc_map.csv", index_col="ID"
+        ).loc[self.id_, "ACCOUNT_NO"]
+        return acc_no
+
 
 class AddStakeHolder:
     """SUPPLIES common METHODS for adding customer, worker, supplier.
@@ -80,11 +89,11 @@ class AddStakeHolder:
         self.address = self.details["ADDRESS"]
         self._type = STAKEHOLDER_TYPE[stakeholder_type]
 
-        self.details.update(ID=self.__generate_id(), LAST_MODIFIED=TIMESTAMP)
+        self.details.update(ID=self._generate_id(), LAST_MODIFIED=TIMESTAMP)
         self.details_data = pd.DataFrame([self.details])
         print(self.details_data)
 
-    def __generate_id(self):
+    def _generate_id(self):
         ts = TIMESTAMP.strftime("%y%m%d%M%S")
         self.id_ = self._type + self.details["GROUP"][0] + ts
         return self.id_
@@ -99,11 +108,21 @@ class AddStakeHolder:
     def open_account(self, **kwargs):
         """Open new account. Returns: acc_no"""
 
-        acc_no = acc.CreateAccount(
+        self.acc_no = acc.CreateAccount(
             self.name, self.address, self.mobile_no, **kwargs
         ).acc_no
-        fop.map_acc(self.data_dir, self.id_, acc_no)
-        return acc_no
+        self._map_acc()
+        return self.acc_no
+
+    def _map_acc(self):
+        file_path = f"{self.data_dir}/acc_map.csv"
+        try:
+            open(file_path, "r")
+        except FileNotFoundError:
+            fop.init_acc_mapfile(file_path)
+
+        with open(file_path, "a") as mapfile:
+            mapfile.write(f"{self.id_},{self.acc_no}\n")
 
 
 def check_stakeholder_existance(path_to_db, name):
