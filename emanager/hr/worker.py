@@ -1,15 +1,18 @@
 from copy import deepcopy
+from emanager.utils.file_ops import init_salary_log
+from emanager.accounting.accounts import Account
 
 import pandas as pd
 from emanager.utils.stakeholder import *
 from emanager.utils.data_types import WORKER_DATA
 from emanager.utils.directories import HR_DATA_DIR
-from emanager.constants import TIMESTAMP
+from emanager.constants import TODAY
 
 
 WORKER_DATA_FILE_NAME = "worker_data.csv"
-WORKER_DATA_FILE_PATH = f"{HR_DATA_DIR}/{WORKER_DATA_FILE_NAME}"
-ATTENDANCE_SHEET_PATH = f"{HR_DATA_DIR}/attendance_sheet.csv"
+WORKER_DATA_FILE = f"{HR_DATA_DIR}/{WORKER_DATA_FILE_NAME}"
+ATTENDANCE_SHEET = f"{HR_DATA_DIR}/attendance_sheet.csv"
+SALARY_LOGFILE = f"{HR_DATA_DIR}/salary_deposit_log.csv"
 WORKER_GROUP = {"P": "Permanent", "T": "Temporary"}
 
 
@@ -31,21 +34,53 @@ class Worker(StakeHolder):
         print("Pay Rate Updated.")
 
     def check_balance(self):
-        pass
+        self.account_balance()
 
     def check_attendance(self, from_date, to_date):
-        pass
+        attendance = pd.read_csv(
+            ATTENDANCE_SHEET,
+            # index_col="DATE",
+            sep=",",
+            parse_dates=["DATE"],
+            usecols=["DATE", self.id_],
+            infer_datetime_format=True,
+        )
+        return attendance[
+            (attendance["DATE"] >= pd.to_datetime(from_date))
+            & (attendance["DATE"] < pd.to_datetime(to_date))
+        ][self.id_].sum(axis=0)
 
-    def deposit_salary(self):
-        salary, last_calculated = self._calc_salary(self.id_)
-        with open(f"{self.data_dir}/salary_deposit_log.csv") as log:
-            log.write(f"ID,{last_calculated},{TIMESTAMP},{salary}\n")
-            ####
+    def calc_salary(self):
+        """calculate salary from last pay date to yesterday
+        returns salary, last_calculated"""
 
-        print(f"salary {salary} deposited in {self.id_} account.")
+        print(f"calculating salary of {self.id_}...")
+        salary_log = pd.read_csv(
+            SALARY_LOGFILE,
+            sep=",",
+            parse_dates=True,
+            infer_datetime_format=True,
+        ).sort_values(by="TO_DATE")
+        salary_log = salary_log[salary_log["ID"] == self.id_]
+        last_calculated = salary_log.iloc[-1]["TO_DATE"]
+        salary = (
+            self.check_attendance(last_calculated, TODAY)
+            * self.details["PAY_RATE"]
+        )
+        return salary, last_calculated
 
-    def _calc_salary(self):
-        pass
+    def credit_salary(self):
+        salary, last_calculated = self.calc_salary()
+        if str(last_calculated) != str(TODAY):
+            with open(SALARY_LOGFILE, "a") as log:
+                log.write(f"{self.id_},{last_calculated},{TODAY},{salary}\n")
+            if salary > 0:
+                Account(self.acc_no).deposit(
+                    salary, remarks="Salary", pay_worker=True
+                )
+                print(f"salary {salary} credited in {self.id_}'s account.")
+        else:
+            print("Salary already up-to-date.")
 
 
 def update_attendance(attendance_data):
@@ -55,17 +90,16 @@ def update_attendance(attendance_data):
     """
 
     sheet = pd.read_csv(
-        ATTENDANCE_SHEET_PATH,
+        ATTENDANCE_SHEET,
         index_col="DATE",
         sep=",",
         parse_dates=["DATE"],
         infer_datetime_format=True,
     )
-    sheet.loc[
-        pd.to_datetime(TIMESTAMP.date()), list(attendance_data.keys())
-    ] = list(attendance_data.values())
-    print(sheet)
-    sheet.to_csv(ATTENDANCE_SHEET_PATH)
+    sheet.loc[pd.to_datetime(TODAY), list(attendance_data.keys())] = list(
+        attendance_data.values()
+    )
+    sheet.to_csv(ATTENDANCE_SHEET)
     print("attendance sheet updated.")
 
 
@@ -100,13 +134,24 @@ class AddWorker(AddStakeHolder):
         )
 
         super().__init__(stakeholder_type="WORKER")
-        self.add_entry(WORKER_DATA_FILE_PATH)
+        self.add_entry(WORKER_DATA_FILE)
         if group == "Permanent":
             self.join_attendance_sheet()
         self.open_account(**acc_kwargs)
+        self.join_attendance_sheet()
+        self._ping_salary_log()
 
     def join_attendance_sheet(self):
-        sheet = pd.read_csv(ATTENDANCE_SHEET_PATH)
-        sheet[self.id_] = 0
-        sheet.to_csv(ATTENDANCE_SHEET_PATH, index=False)
+        sheet = pd.read_csv(ATTENDANCE_SHEET)
+        sheet[self.id_] = 0.0
+        sheet.to_csv(ATTENDANCE_SHEET, index=False)
         print(f"{self.id_} joined attendance sheet.")
+
+    def _ping_salary_log(self):
+        try:
+            open(SALARY_LOGFILE, "r")
+        except FileNotFoundError:
+            init_salary_log(SALARY_LOGFILE)
+        with open(SALARY_LOGFILE, "a") as log:
+            log.write(f"{self.id_},{TODAY},{TODAY},0.0\n")
+        print("pinged salary log.")

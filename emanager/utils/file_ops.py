@@ -18,14 +18,14 @@ def init_acc_mapfile(path_to_file):
 # Worker attendance sheet & salary
 
 
-def init_attendance_sheet(sheet_dir, worker_ids: list):
-    with open(f"{sheet_dir}/attendance_sheet.csv", "w") as sheet:
+def init_attendance_sheet(attendance_sheetfile, worker_ids: list):
+    with open(attendance_sheetfile, "w") as sheet:
         sheet.write("DATE")
         for id in worker_ids:
             sheet.write(f",{id}")
         sheet.write("\n")
 
 
-def init_salary_log(file_dir):
-    with open(f"{file_dir}/salary_deposit_log.csv", "w") as log:
-        log.write("ID,FROM_TIME,TO_TIME,CALCULATED_SALARY\n")
+def init_salary_log(salary_logfile):
+    with open(salary_logfile, "w") as log:
+        log.write("ID,FROM_DATE,TO_DATE,CALCULATED_SALARY\n")

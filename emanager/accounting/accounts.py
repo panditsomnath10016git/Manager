@@ -33,11 +33,11 @@ class Account:
         )
         return cr_balance
 
-    def deposit(self, amount, **remarks):
-        Transaction().deposit(amount, self.acc_no, **remarks)
+    def deposit(self, amount, **kw):
+        Transaction().deposit(amount, self.acc_no, **kw)
 
-    def withdrawl(self, amount, **remarks):
-        Transaction().withdrawl(amount, self.acc_no, **remarks)
+    def withdrawl(self, amount, **kw):
+        Transaction().withdrawl(amount, self.acc_no, **kw)
 
     def view_statement(self, upto=10):
         print(

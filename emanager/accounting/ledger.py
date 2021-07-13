@@ -1,12 +1,10 @@
-import os
 import pandas as pd
 from emanager.constants import TIMESTAMP, TREASURY_ACC_NO
-
-acc_data_path = os.path.dirname(os.path.realpath(__file__)) + "/acc_data"
+from emanager.utils.directories import ACCOUNTING_DATA_DIR
 
 
 class Ledger:
-    def write_transaction(self, acc_no, trans_details, new_acc=False):
+    def write_transaction(self, acc_no, trans_details, pay_worker=False, **kw):
         """updates ledgers with transaction details"""
 
         print("writing transaction..")
@@ -19,8 +17,9 @@ class Ledger:
             "CR_BALANCE": 0.0,
         }
         trans_data.update(trans_details)
-        self.__write_ledger(acc_no, trans_data, new_acc=new_acc)
-        self.__write_ledger(TREASURY_ACC_NO, trans_data)
+        self.__write_ledger(acc_no, trans_data, **kw)
+        if not pay_worker:
+            self.__write_ledger(TREASURY_ACC_NO, trans_data)
         print("account updated.\n")
 
     def __write_ledger(self, acc_no, trans_details, new_acc=False):
@@ -40,7 +39,7 @@ class Ledger:
         trans_details.update(CR_BALANCE=new_cr_balance)
         trans_entry = pd.DataFrame.from_dict([trans_details])
         trans_entry.to_csv(
-            f"{acc_data_path}/{acc_no}.csv",
+            f"{ACCOUNTING_DATA_DIR}/{acc_no}.csv",
             mode=write_mode,
             header=new_acc,
             index=False,
@@ -50,19 +49,20 @@ class Ledger:
     # maybe move to bank_core
     def _update_cr_balance_in_chart(self, acc_no, new_cr_balance):
         acc_chart = pd.read_csv(
-            f"{acc_data_path}/chart_of_accounts.csv", index_col="ACCOUNT_NO"
+            f"{ACCOUNTING_DATA_DIR}/chart_of_accounts.csv",
+            index_col="ACCOUNT_NO",
         )
         acc_chart.loc[acc_no, ["CR_BALANCE", "LAST_UPDATED"]] = [
             new_cr_balance,
             TIMESTAMP,
         ]
-        acc_chart.to_csv(f"{acc_data_path}/chart_of_accounts.csv")
+        acc_chart.to_csv(f"{ACCOUNTING_DATA_DIR}/chart_of_accounts.csv")
         # print(acc_chart.loc[acc_no, :])
 
     def _get_cr_balance(self, acc_no):
         return (
             pd.read_csv(
-                f"{acc_data_path}/{acc_no}.csv", usecols=["CR_BALANCE"]
+                f"{ACCOUNTING_DATA_DIR}/{acc_no}.csv", usecols=["CR_BALANCE"]
             )
             .tail(1)
             .iloc[0, 0]

@@ -66,6 +66,7 @@ class LoginWindow(tk.Tk):
             self.destroy()
             app = App()
             app.mainloop()
+            self.quit()
         else:
             messagebox.showwarning(
                 "LoginError", "Invalid Username or Password"
