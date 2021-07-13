@@ -106,7 +106,12 @@ class CreateAccount:
         )
         print("account created.\n", acc_data)
         # initiate the ledger
-        Transaction().deposit(first_deposit, self.acc_no, new_acc=True)
+        Transaction().deposit(
+            first_deposit,
+            self.acc_no,
+            remarks="new account created",
+            new_acc=True,
+        )
 
     def _generate_acc_no(self):
         # TODO map acc_no with ID no

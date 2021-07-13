@@ -30,7 +30,7 @@ CUSTOMER_DATA = {
     "LAST_MODIFIED": object,
 }
 
-SELLER_DATA = {
+SUPPLIER_DATA = {
     "ID": object,
     "NAME": object,
     "ADDRESS": object,

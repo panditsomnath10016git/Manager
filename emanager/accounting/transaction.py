@@ -11,7 +11,7 @@ class Transaction:
     def __init__(self):
         pass
 
-    def deposit(self, amount, payer, remarks="Self Deposit", **kw):
+    def deposit(self, amount, payer, remarks="Cash Deposit", **kw):
         print(f"depositing {amount} rupees in acc {payer}...")
         trans_details = {
             "TRANSACTION_ID": self.__transaction_id(),
@@ -20,7 +20,7 @@ class Transaction:
         }
         Ledger().write_transaction(payer, trans_details, **kw)
 
-    def withdrawl(self, amount, benifactor, remarks="Self Withdrawl", **kw):
+    def withdrawl(self, amount, benifactor, remarks="Cash Withdrawl", **kw):
         print(f"withdrawing {amount} rupees from acc {benifactor}...")
         trans_details = {
             "TRANSACTION_ID": self.__transaction_id(),

@@ -19,6 +19,7 @@ class Ledger:
         trans_data.update(trans_details)
         self.__write_ledger(acc_no, trans_data, **kw)
         if not pay_worker:
+            trans_data["REMARKS"] = f"{acc_no}:{trans_data['REMARKS']}"
             self.__write_ledger(TREASURY_ACC_NO, trans_data)
         print("account updated.\n")
 

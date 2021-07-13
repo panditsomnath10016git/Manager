@@ -101,9 +101,15 @@ class AddStakeHolder:
     def add_entry(self, path_to_data_file):
         """Appends the details of worker(self.details) to the file"""
 
-        self.details_data.to_csv(
-            path_to_data_file, mode="a", header=False, index=False
-        )
+        try:
+            open(path_to_data_file, "r")
+            self.details_data.to_csv(
+                path_to_data_file, mode="a", header=False, index=False
+            )
+        except FileNotFoundError:
+            self.details_data.to_csv(
+                path_to_data_file, index=False
+            )
 
     def open_account(self, **kwargs):
         """Open new account. Returns: acc_no"""
