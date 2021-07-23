@@ -23,6 +23,9 @@ class Customer(StakeHolder):
         self.data_dir = SELL_DATA_DIR
         super().__init__(SELL_DATA_FILE_NAME)
 
+    def buy(self, item_id, quantity):
+        pass
+
 
 class AddCustomer(AddStakeHolder):
     """Add new customers to database"""

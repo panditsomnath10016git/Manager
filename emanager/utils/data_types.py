@@ -1,4 +1,3 @@
-
 ACC_CHART_DATA = {
     "ACCOUNT_NO": int,
     "NAME": object,
@@ -37,4 +36,23 @@ SUPPLIER_DATA = {
     "MOBILE_NO": object,
     "GROUP": object,
     "LAST_MODIFIED": object,
+}
+
+ITEM_DATA = {
+    "ID": object,
+    "GROUP": object,
+    "MODEL": object,
+    "VARIANT": object,
+    "DESCRIPTION": object,
+    "PRICE": float,
+}
+
+STOCK_LEDGER = {
+    "DATE": object,
+    "ITEM_ID": object,
+    "ADD/REM": object,
+    "REMARKS": object,
+    "QUANTITY": int,
+    "PRICE": float,
+    "TOTAL_VALUE": float,
 }

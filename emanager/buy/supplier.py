@@ -17,7 +17,7 @@ class Supplier(StakeHolder):
         self.data_dir = BUY_DATA_DIR
         super().__init__(BUY_DATA_FILE_NAME)
 
-    def supply(self, item_id, quantity):
+    def buy(self, item_id, quantity):
         pass
 
 
