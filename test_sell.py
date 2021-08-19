@@ -1,4 +1,6 @@
 from emanager.sell.customer import *
+from emanager.sell.sell import SellItem
+
 
 cstmr_name = "Customer 1"
 id_ = check_stakeholder_existance(SELL_DATA_FILE_PATH, cstmr_name)
@@ -18,6 +20,8 @@ if id_ is None:
 
 cstmr = Customer(id_)
 
-cstmr.update_details(
+'''cstmr.update_details(
     GROUP=CUSTOMER_GROUP["I"], MOBILE_NO="956414831", ADDRESS="address1"
-)
+)'''
+
+SellItem(id_, "CHATITCB", amount_paid=True)

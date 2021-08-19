@@ -45,14 +45,19 @@ ITEM_DATA = {
     "VARIANT": object,
     "DESCRIPTION": object,
     "PRICE": float,
+    "IMAGE": object,
+    "LAST_UPDATED": object,
 }
 
-STOCK_LEDGER = {
-    "DATE": object,
-    "ITEM_ID": object,
-    "ADD/REM": object,
-    "REMARKS": object,
+STOCK_DATA = {
+    "ITEM": object,
     "QUANTITY": int,
-    "PRICE": float,
-    "TOTAL_VALUE": float,
+    "LAST_UPDATED": object,
+}
+
+STOCK_LEDGER_DATA = {
+    "DATE": object,
+    "ITEM": object,
+    "MODE": object,
+    "REMARKS": object,
 }

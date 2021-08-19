@@ -19,9 +19,7 @@ class Worker(StakeHolder):
     def __init__(self, id_):
         print(f"Worker {id_}  initiated...")
         self.id_ = id_
-        self.data_format = WORKER_DATA
-        self.data_dir = HR_DATA_DIR
-        super().__init__(WORKER_DATA_FILE_NAME)
+        super().__init__(id_, HR_DATA_DIR, WORKER_DATA_FILE_NAME, WORKER_DATA)
 
     def _get_data(self):
         self.check_database()

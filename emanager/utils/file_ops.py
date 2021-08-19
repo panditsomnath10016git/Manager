@@ -29,3 +29,16 @@ def init_attendance_sheet(attendance_sheetfile, worker_ids: list):
 def init_salary_log(salary_logfile):
     with open(salary_logfile, "w") as log:
         log.write("ID,FROM_DATE,TO_DATE,CALCULATED_SALARY\n")
+
+
+# stock
+
+
+def init_stock_ledger(filepath):
+    with open(filepath, "w") as file:
+        file.write("DATE,ITEM,MODE,REMARKS\n")
+
+
+def init_stock_data(filepath):
+    with open(filepath, "w") as file:
+        file.write("ITEM,QUANTITY,LAST_UPDATED\n")

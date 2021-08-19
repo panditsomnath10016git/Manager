@@ -16,15 +16,10 @@ CUSTOMER_GROUP = {
 
 
 class Customer(StakeHolder):
-    def __init__(self, id_):
-        print(f"Customer {id_}  initiated...")
-        self.id_ = id_
-        self.data_format = CUSTOMER_DATA
-        self.data_dir = SELL_DATA_DIR
-        super().__init__(SELL_DATA_FILE_NAME)
-
-    def buy(self, item_id, quantity):
-        pass
+    def __init__(self, id):
+        print(f"Customer {id}  initiated...")
+        self._id = id
+        super().__init__(id, SELL_DATA_DIR, SELL_DATA_FILE_NAME, CUSTOMER_DATA)
 
 
 class AddCustomer(AddStakeHolder):

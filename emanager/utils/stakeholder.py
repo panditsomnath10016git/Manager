@@ -13,10 +13,10 @@ STAKEHOLDER_TYPE = {
 class StakeHolder:
     """Supplies common methods for initiating customer, worker, supplier"""
 
-    def __init__(self, stakeholder_data_filename) -> None:
-        """self.id_, self.data_format, self.data_dir
-        must be declared in child classes of StakeHolder"""
-
+    def __init__(self, id, data_dir, stakeholder_data_filename, data_format):
+        self._id = id
+        self.data_dir = data_dir
+        self.data_format = data_format
         self.data_path = f"{self.data_dir}/{stakeholder_data_filename}"
         self.check_details()
 
@@ -32,32 +32,38 @@ class StakeHolder:
             index_col="ID",
             sep=",",
         )
-        self.name = s_data.loc[self.id_, "NAME"]
-        self.details = s_data.loc[self.id_, :]
+        self.name = s_data.loc[self._id, "NAME"]
+        self.details = s_data.loc[self._id, :]
         print(self.details)
         print("Account no : ", self.acc_no)
 
     def account_balance(self):
         return acc.Account(self.acc_no).get_cr_balance()
 
+    def deposit_balance(self, amount, **kw):
+        acc.Account(self.acc_no).deposit(amount, **kw)
+
+    def withdraw_balance(self, amount, **kw):
+        acc.Account(self.acc_no).withdrawl(amount, **kw)
+
     def update_details(self, update_acc=True, **kwargs):
         """Update details of a stakeholder"""
 
         # TODO check validity of kwargs
-        print(f"updating {self.id_} detalils...")
+        print(f"updating {self._id} detalils...")
         s_data = pd.read_csv(
             self.data_path, index_col="ID", sep=",", dtype=self.data_format
         )
-        self.details = s_data.loc[self.id_, :]
+        self.details = s_data.loc[self._id, :]
         s_details = self.details.to_dict()
         s_details.update(kwargs)
         s_details.update(LAST_MODIFIED=TIMESTAMP)
 
         values = list(s_details.values())
-        s_data.at[self.id_] = values
+        s_data.at[self._id] = values
         # ?any way to insert only the changed data rather than reading all
         s_data.to_csv(self.data_path)
-        print(f"{self.id_} details updated.")
+        print(f"{self._id} details updated.")
         if update_acc:
             self._update_acc_details(**s_details)
 
@@ -71,7 +77,7 @@ class StakeHolder:
     def get_acc_no(self):
         acc_no = pd.read_csv(
             f"{self.data_dir}/acc_map.csv", index_col="ID"
-        ).loc[self.id_, "ACCOUNT_NO"]
+        ).loc[self._id, "ACCOUNT_NO"]
         return acc_no
 
 
@@ -95,8 +101,8 @@ class AddStakeHolder:
 
     def _generate_id(self):
         ts = TIMESTAMP.strftime("%y%m%d%M%S")
-        self.id_ = self._type + self.details["GROUP"][0] + ts
-        return self.id_
+        self._id = self._type + self.details["GROUP"][0] + ts
+        return self._id
 
     def add_entry(self, path_to_data_file):
         """Appends the details of worker(self.details) to the file"""
@@ -107,9 +113,7 @@ class AddStakeHolder:
                 path_to_data_file, mode="a", header=False, index=False
             )
         except FileNotFoundError:
-            self.details_data.to_csv(
-                path_to_data_file, index=False
-            )
+            self.details_data.to_csv(path_to_data_file, index=False)
 
     def open_account(self, **kwargs):
         """Open new account. Returns: acc_no"""
@@ -128,7 +132,7 @@ class AddStakeHolder:
             fop.init_acc_mapfile(file_path)
 
         with open(file_path, "a") as mapfile:
-            mapfile.write(f"{self.id_},{self.acc_no}\n")
+            mapfile.write(f"{self._id},{self.acc_no}\n")
 
 
 def check_stakeholder_existance(path_to_db, name):
@@ -142,12 +146,12 @@ def check_stakeholder_existance(path_to_db, name):
         sep=",",
     )
     try:
-        id_ = data.loc[name, "ID"]
+        _id = data.loc[name, "ID"]
         print(f"{name} exists...")
         details = data.loc[name, :]
         print(details)
     except KeyError:
         print(f"{name} is not in database.")
-        id_ = None
+        _id = None
 
-    return id_
+    return _id
